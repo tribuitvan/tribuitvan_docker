@@ -1,0 +1,32 @@
+# https://xuanthulab.net/cai-dat-owncloud-tao-dich-vu-luu-tru-dam-may-rieng-voi-docker.html
+
+
+# optimized
+services:
+  db:
+    # We use a mariadb image which supports both amd64 & arm64 architecture
+    image: mariadb:10.6.4-focal
+    # If you really want to use MySQL, uncomment the following line
+    #image: mysql:8.0.27
+    command: '--default-authentication-plugin=mysql_native_password'
+    volumes:
+      - /owncloud/db:/var/lib/mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=someowncloud
+    networks:
+      - owncloud-network
+
+  owncloud:
+    image: owncloud:latest
+    ports:
+      - 9898:80
+    restart: always
+    volumes:
+      - /owncloud/files:/var/www/html
+    networks:
+      - owncloud-network
+
+networks:
+    owncloud-network:
+      driver: bridge
